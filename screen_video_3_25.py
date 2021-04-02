@@ -4,11 +4,33 @@ from PIL import ImageGrab
 from cv2 import *
 import cv2
 import tkinter as tk
+import csv
 import numpy as np
 from pynput import keyboard
 face_classifier =cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
 
 window = tk.Tk()
+face0Data=[]
+face1Data=[]
+
+
+def saveHeadMovementData(face0Data :list, face1Data :list):
+  print("in saveHeadMovementData")
+  print("len(face0Data):",len(face0Data))
+  print("len(face1Data):",len(face1Data))
+
+  timeStamp=int(time.time())
+  fileHeader = ["timestamp","X", "Y","W","H"]
+
+  face0DataWriter = csv.writer(open("face0Data_"+str(timeStamp)+".csv", "w",newline='\n', encoding='utf-8'))
+  face0DataWriter.writerow(fileHeader)
+  face0DataWriter.writerows(face0Data)
+
+  face1DataWriter = csv.writer(open("face1Data_" + str(timeStamp) + ".csv", "w",newline='\n', encoding='utf-8'))
+  face1DataWriter.writerow(fileHeader)
+  face1DataWriter.writerows(face1Data)
+
+
 
 def video_record():   # 录入视频
   global name
@@ -26,6 +48,7 @@ def video_record():   # 录入视频
   while True:
     if flag:
       print("录制结束！")
+      saveHeadMovementData(face0Data,face1Data)
       global final_time
       final_time = time.time()
       #video.release() #释放
@@ -41,35 +64,56 @@ def video_record():   # 录入视频
     if faces is ():
       print('No faces detected!')
 
-    width, height = image.size
+    timeStamp = time.time()
+    width, height = 1920,1080
 
-    # faces_found
-    for (x, y, w, h) in faces:
-      #if x < 1000 and y < 1000:
-      if (x + (w / 2)) < width / 2:
-        faceid = 0
-        # draw_rectangle_around_face
-        cv2.rectangle(image, (x, y), (x + w, y + h), (127, 0, 255), 2)
-        #     cv2.imshow('faces',image)
-        #     cv2.waitKey(0)
-        print("face coord",str(i),",faceid:",str(faceid),":",x,y,x + w,y + h)
-        #faceid = faceid + 1
-        # cropping_face_only
-        roi_color = image[y:y + h, x:x + w]
-        roi_gray = gray[y:y + h, x:x + w]
-        # cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(255,255,0),2)
-      else:
-        faceid = 1
-        # draw_rectangle_around_face
-        cv2.rectangle(image, (x, y), (x + w, y + h), (127, 0, 255), 2)
-        #     cv2.imshow('faces',image)
-        #     cv2.waitKey(0)
-        print("face coord", str(i), ",faceid:", str(faceid), ":", x, y, x + w, y + h)
-        #faceid = faceid + 1
-        # cropping_face_only
-        roi_color = image[y:y + h, x:x + w]
-        roi_gray = gray[y:y + h, x:x + w]
-        # cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(255,255,0),2)
+    if len(faces)==0:
+        face0Data.append([timeStamp,0,0,0,0])
+        face1Data.append([timeStamp,0,0,0,0])
+
+    elif len(faces)==1:
+      face=faces[0]
+      (x, y, w, h)=face
+      if (x + (w / 2)) < width / 2: #face 0
+        face0Data.append([timeStamp,x, y, w, h])
+        face1Data.append([timeStamp,0,0,0,0])
+
+      else: #face 1
+        face0Data.append([timeStamp, 0, 0, 0, 0])
+        face1Data.append([timeStamp,x, y, w, h])
+
+
+
+    else:  # 2 faces_found
+      for (x, y, w, h) in faces:
+        #if x < 1000 and y < 1000:
+        if (x + (w / 2)) < width / 2:
+          faceid = 0
+          # draw_rectangle_around_face
+          face0Data.append([timeStamp,x, y, w, h])
+          cv2.rectangle(image, (x, y), (x + w, y + h), (127, 0, 255), 2)
+          #     cv2.imshow('faces',image)
+          #     cv2.waitKey(0)
+          print("face coord",str(i),",faceid:",str(faceid),":",x,y,x + w,y + h)
+          #faceid = faceid + 1
+          # cropping_face_only
+          roi_color = image[y:y + h, x:x + w]
+          roi_gray = gray[y:y + h, x:x + w]
+          # cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(255,255,0),2)
+        else:
+          faceid = 1
+          # draw_rectangle_around_face
+          face1Data.append([timeStamp,x, y, w, h])
+
+          cv2.rectangle(image, (x, y), (x + w, y + h), (127, 0, 255), 2)
+          #     cv2.imshow('faces',image)
+          #     cv2.waitKey(0)
+          print("face coord", str(i), ",faceid:", str(faceid), ":", x, y, x + w, y + h)
+          #faceid = faceid + 1
+          # cropping_face_only
+          roi_color = image[y:y + h, x:x + w]
+          roi_gray = gray[y:y + h, x:x + w]
+          # cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(255,255,0),2)
 
     i = i + 1
     #imm = cvtColor(np.array(im), COLOR_RGB2BGR) # 转为opencv的BGR模式
@@ -102,4 +146,6 @@ if __name__ == '__main__':
   with keyboard.Listener(on_press=on_press) as listener:
     listener.join()
   time.sleep(1)  # 等待视频释放过后
-  video_info()
+  # video_info()
+
+
