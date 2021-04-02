@@ -23,5 +23,8 @@ the x and y to seperate coordinates of two faces.
 *or save the data into arrays and do real-time analysis??*  
 
 GUI: two little window with energy bar and link to the sync result  
-locate the precise x and y of the windows.
+locate the precise x and y of the windows.  
 [弹窗](https://zhuanlan.zhihu.com/p/81429343)  
+
+first energy bar: x:800  y:660  w:66  h:200  
+second energy bar:  x:1700  y:660  w:66  h:200

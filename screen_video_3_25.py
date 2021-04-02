@@ -41,18 +41,19 @@ def video_record():   # 录入视频
     if faces is ():
       print('No faces detected!')
 
-    # faces_found
+    width, height = image.size
 
+    # faces_found
     for (x, y, w, h) in faces:
       #if x < 1000 and y < 1000:
-      if x < 1000:
+      if (x + (w / 2)) < width / 2:
         faceid = 0
         # draw_rectangle_around_face
         cv2.rectangle(image, (x, y), (x + w, y + h), (127, 0, 255), 2)
         #     cv2.imshow('faces',image)
         #     cv2.waitKey(0)
         print("face coord",str(i),",faceid:",str(faceid),":",x,y,x + w,y + h)
-        faceid = faceid + 1
+        #faceid = faceid + 1
         # cropping_face_only
         roi_color = image[y:y + h, x:x + w]
         roi_gray = gray[y:y + h, x:x + w]
@@ -64,7 +65,7 @@ def video_record():   # 录入视频
         #     cv2.imshow('faces',image)
         #     cv2.waitKey(0)
         print("face coord", str(i), ",faceid:", str(faceid), ":", x, y, x + w, y + h)
-        faceid = faceid + 1
+        #faceid = faceid + 1
         # cropping_face_only
         roi_color = image[y:y + h, x:x + w]
         roi_gray = gray[y:y + h, x:x + w]
