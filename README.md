@@ -24,3 +24,4 @@ the x and y to seperate coordinates of two faces.
 
 GUI: two little window with energy bar and link to the sync result  
 locate the precise x and y of the windows.
+[弹窗](https://zhuanlan.zhihu.com/p/81429343)  
