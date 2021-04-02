@@ -16,3 +16,11 @@ Pillow
 python-opencv
 ```
 ### 2021/4/1
+the x and y to seperate coordinates of two faces.
+
+**how to study the sync**  
+*save the result to local file??*  
+*or save the data into arrays and do real-time analysis??*  
+
+GUI: two little window with energy bar and link to the sync result  
+locate the precise x and y of the windows.

@@ -3,9 +3,12 @@ from datetime import datetime
 from PIL import ImageGrab
 from cv2 import *
 import cv2
+import tkinter as tk
 import numpy as np
 from pynput import keyboard
 face_classifier =cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
+
+window = tk.Tk()
 
 def video_record():   # 录入视频
   global name
@@ -39,25 +42,42 @@ def video_record():   # 录入视频
       print('No faces detected!')
 
     # faces_found
-    faceid = 0
-    for (x, y, w, h) in faces:
-      # draw_rectangle_around_face
-      cv2.rectangle(image, (x, y), (x + w, y + h), (127, 0, 255), 2)
-      #     cv2.imshow('faces',image)
-      #     cv2.waitKey(0)
-      print("face coord",str(i),",faceid:",str(faceid),":",x,y,x + w,y + h)
-      faceid = faceid + 1
-      # cropping_face_only
-      roi_color = image[y:y + h, x:x + w]
-      roi_gray = gray[y:y + h, x:x + w]
-      # cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(255,255,0),2)
 
+    for (x, y, w, h) in faces:
+      #if x < 1000 and y < 1000:
+      if x < 1000:
+        faceid = 0
+        # draw_rectangle_around_face
+        cv2.rectangle(image, (x, y), (x + w, y + h), (127, 0, 255), 2)
+        #     cv2.imshow('faces',image)
+        #     cv2.waitKey(0)
+        print("face coord",str(i),",faceid:",str(faceid),":",x,y,x + w,y + h)
+        faceid = faceid + 1
+        # cropping_face_only
+        roi_color = image[y:y + h, x:x + w]
+        roi_gray = gray[y:y + h, x:x + w]
+        # cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(255,255,0),2)
+      else:
+        faceid = 1
+        # draw_rectangle_around_face
+        cv2.rectangle(image, (x, y), (x + w, y + h), (127, 0, 255), 2)
+        #     cv2.imshow('faces',image)
+        #     cv2.waitKey(0)
+        print("face coord", str(i), ",faceid:", str(faceid), ":", x, y, x + w, y + h)
+        faceid = faceid + 1
+        # cropping_face_only
+        roi_color = image[y:y + h, x:x + w]
+        roi_gray = gray[y:y + h, x:x + w]
+        # cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(255,255,0),2)
 
     i = i + 1
     #imm = cvtColor(np.array(im), COLOR_RGB2BGR) # 转为opencv的BGR模式
     #video.write(imm)  #写入
-    time.sleep(0.2) # 等待5秒再次循环
+    # time.sleep(0.2) # 等待5秒再次循环
     # m1.save('test_image.png')
+
+# GUI
+# window.wm_attributes('-topmost',1)
 def on_press(key):   # 监听按键
   global flag
   if key == keyboard.Key.home:
@@ -82,4 +102,3 @@ if __name__ == '__main__':
     listener.join()
   time.sleep(1)  # 等待视频释放过后
   video_info()
-  
