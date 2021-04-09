@@ -28,3 +28,6 @@ locate the precise x and y of the windows.
 
 first energy bar: x:800  y:660  w:66  h:200  
 second energy bar:  x:1700  y:660  w:66  h:200
+
+优化输出数据，如果没检测到和上一帧保持一样
+判断相关性

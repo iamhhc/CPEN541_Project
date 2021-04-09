@@ -8,11 +8,19 @@ import tkinter as tk
 import csv
 import numpy as np
 from pynput import keyboard
+import queue
+from numpy import *
+
 face_classifier =cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
 
 window = tk.Tk()
 face0Data=[]
 face1Data=[]
+faceData0_5s=[]
+faceData1_5s=[]
+res = queue.SqQueue(15)
+q_face0 = queue.SqQueue(15)
+q_face1 = queue.SqQueue(15)
 width, height = 1920,1080
 
 def saveHeadMovementData(face0Data :list, face1Data :list):
@@ -32,6 +40,13 @@ def saveHeadMovementData(face0Data :list, face1Data :list):
   face1DataWriter.writerows(face1Data)
 
 
+def test_sync(inputqueue):
+  for i in range(15):
+    faceData0_5s[i] = inputqueue[i]
+  # avg = np.mean(inputqueue)
+
+  var = np.var(faceData0_5s)
+  return var/20
 
 def video_record():   # 录入视频
   global name
@@ -101,6 +116,19 @@ def video_record():   # 录入视频
           faceid = 1
           face1=[timeStamp,x, y, w, h]
           print("timeStamp",str(timeStamp), ",faceid:", str(faceid), ":", x, y, x + w, y + h)
+
+
+    if q_face0.IsFull():
+      q_face0.DeQueue()
+    q_face0.EnQueue(face0[2])
+    if q_face1.IsFull():
+      q_face1.DeQueue()
+    q_face1.EnQueue(face1[2])
+    # sync_res0 = test_sync(q_face0)
+    # sync_res1 = test_sync(q_face1)
+    # print("the sunc result of face0", sync_res0,"the sunc result of face1", sync_res1)
+    q_face0.ShowQueue()
+    q_face1.ShowQueue()
 
     face0Data.append(face0)
     face1Data.append(face1)
