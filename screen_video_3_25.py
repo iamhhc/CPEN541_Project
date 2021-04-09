@@ -148,5 +148,6 @@ if __name__ == '__main__':
   th.start()
   with keyboard.Listener(on_press=on_press) as listener:
     listener.join()
+  time.sleep(1)
 
 
