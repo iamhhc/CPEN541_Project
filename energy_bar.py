@@ -26,7 +26,7 @@ class EnergyBar:
 
 
     def start(self,onKeyPress):
-        self.root.bind('<Enter>',onKeyPress)
+        self.root.bind("<KeyPress-a>",onKeyPress)
         self.root.mainloop()
 
 

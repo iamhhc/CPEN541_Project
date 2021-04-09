@@ -153,6 +153,7 @@ def video_record(energyBar:EnergyBar):   # 录入视频
 
 def on_press_to_stop(event=None):
   global flag
+  print("event-----",event.char)
   flag = True # 改变
 
 if __name__ == '__main__':
