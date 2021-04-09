@@ -1,4 +1,5 @@
 import copy
+import sq_queue
 import time,threading
 from datetime import datetime
 from PIL import ImageGrab
@@ -8,8 +9,9 @@ import tkinter as tk
 import csv
 import numpy as np
 from pynput import keyboard
-import queue
 from numpy import *
+
+from MyQueue import MyQueue
 
 face_classifier =cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
 
@@ -18,9 +20,9 @@ face0Data=[]
 face1Data=[]
 faceData0_5s=[]
 faceData1_5s=[]
-res = queue.SqQueue(15)
-q_face0 = queue.SqQueue(15)
-q_face1 = queue.SqQueue(15)
+res = sq_queue.SqQueue(15)
+q_face0 = MyQueue(15)
+q_face1 = MyQueue(15)
 width, height = 1920,1080
 
 def saveHeadMovementData(face0Data :list, face1Data :list):
@@ -40,13 +42,12 @@ def saveHeadMovementData(face0Data :list, face1Data :list):
   face1DataWriter.writerows(face1Data)
 
 
-def test_sync(inputqueue):
-  for i in range(15):
-    faceData0_5s[i] = inputqueue[i]
+def test_sync(inputqueue:MyQueue):
+  # for i in range(15):
+  #   faceData0_5s[i] = inputqueue[i]
   # avg = np.mean(inputqueue)
 
-  var = np.var(faceData0_5s)
-  return var/20
+  return np.var(inputqueue.getQueue())
 
 def video_record():   # 录入视频
   global name
@@ -118,17 +119,13 @@ def video_record():   # 录入视频
           print("timeStamp",str(timeStamp), ",faceid:", str(faceid), ":", x, y, x + w, y + h)
 
 
-    if q_face0.IsFull():
-      q_face0.DeQueue()
     q_face0.EnQueue(face0[2])
-    if q_face1.IsFull():
-      q_face1.DeQueue()
     q_face1.EnQueue(face1[2])
-    # sync_res0 = test_sync(q_face0)
-    # sync_res1 = test_sync(q_face1)
+    sync_res0 = test_sync(q_face0)
+    sync_res1 = test_sync(q_face1)
     # print("the sunc result of face0", sync_res0,"the sunc result of face1", sync_res1)
-    q_face0.ShowQueue()
-    q_face1.ShowQueue()
+    print(q_face0.getQueue())
+    print(q_face1.getQueue())
 
     face0Data.append(face0)
     face1Data.append(face1)
@@ -151,6 +148,5 @@ if __name__ == '__main__':
   th.start()
   with keyboard.Listener(on_press=on_press) as listener:
     listener.join()
-  time.sleep(1)  # 等待视频释放过后
 
 
