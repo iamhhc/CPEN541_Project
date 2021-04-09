@@ -1,4 +1,4 @@
-import copy
+from copy import deepcopy
 import sq_queue
 import time,threading
 from datetime import datetime
@@ -12,6 +12,7 @@ from pynput import keyboard
 from numpy import *
 
 from MyQueue import MyQueue
+from energy_bar import EnergyBar
 
 face_classifier =cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
 
@@ -31,7 +32,7 @@ def saveHeadMovementData(face0Data :list, face1Data :list):
   print("len(face1Data):",len(face1Data))
 
   timeStamp=int(time.time())
-  fileHeader = ["timestamp","X", "Y","W","H"]
+  fileHeader = ["timestamp","X", "Y","W","H","var"]
 
   face0DataWriter = csv.writer(open("face0Data_"+str(timeStamp)+".csv", "w",newline='\n', encoding='utf-8'))
   face0DataWriter.writerow(fileHeader)
@@ -49,7 +50,9 @@ def test_sync(inputqueue:MyQueue):
 
   return np.var(inputqueue.getQueue())
 
-def video_record():   # 录入视频
+
+def video_record(energyBar:EnergyBar):   # 录入视频
+
   global name
   name = datetime.now().strftime('%Y-%m-%d %H-%M-%S') # 当前的时间（当文件名）
   screen = ImageGrab.grab() # 获取当前屏幕
@@ -62,8 +65,8 @@ def video_record():   # 录入视频
   global start_time
   start_time = time.time()
   i = 0
-  lastFace0=[-1,0,0,0,0]
-  lastFace1=[-1,0,0,0,0]
+  lastFace0=(-1,0,0,0,0)
+  lastFace1=(-1,0,0,0,0)
 
   while True:
     if flag:
@@ -98,11 +101,11 @@ def video_record():   # 录入视频
       (x, y, w, h)=faces[0]
 
       if (x + (w / 2)) < width / 2: #face 0
-        face0=[timeStamp,x, y , w, h]
+        face0=(timeStamp,x, y , w, h)
 
       else: #face 1
 
-        face1=[timeStamp,x, y, w, h]
+        face1=(timeStamp,x, y, w, h)
 
     elif len(faces)==2 :  # 2 faces_found
       for (x, y, w, h) in faces:
@@ -110,44 +113,59 @@ def video_record():   # 录入视频
 
         if (x + (w / 2)) < width / 2: #屏幕左半边的脸识别为  faceid = 0
           faceid = 0
-          face0=[timeStamp,x, y, w, h]
-          print("timeStamp",str(timeStamp),"faceid:",str(faceid),":",x,y,x + w,y + h)
+          face0=(timeStamp,x, y, w, h)
+          # print("timeStamp",str(timeStamp),"faceid:",str(faceid),":",x,y,x + w,y + h)
 
         else: #屏幕右半边的脸识别为  faceid = 1
           faceid = 1
-          face1=[timeStamp,x, y, w, h]
-          print("timeStamp",str(timeStamp), ",faceid:", str(faceid), ":", x, y, x + w, y + h)
+          face1=(timeStamp,x, y, w, h)
+          # print("timeStamp",str(timeStamp), ",faceid:", str(faceid), ":", x, y, x + w, y + h)
 
 
     q_face0.EnQueue(face0[2])
     q_face1.EnQueue(face1[2])
     sync_res0 = test_sync(q_face0)
     sync_res1 = test_sync(q_face1)
-    # print("the sunc result of face0", sync_res0,"the sunc result of face1", sync_res1)
-    print(q_face0.getQueue())
-    print(q_face1.getQueue())
+
+
+    face0=face0+(sync_res0,)
+    face1=face1+(sync_res1,)
+    print(" np.sqrt(sync_res0) ", np.sqrt(sync_res0))
+
+    energyBar.changeBar0Progress(np.sqrt(sync_res0)/2)
+    energyBar.changeBar1Progress(np.sqrt(sync_res1)/2)
 
     face0Data.append(face0)
     face1Data.append(face1)
-    lastFace0=face0
+
+
+    if face0[0]==-1:
+      face0=(-1,0,0,0,0,0)
+    if face1[0] == -1:
+      face1 = (-1, 0, 0, 0, 0, 0)
+
+    lastFace0= face0
     lastFace1=face1
+
     i = i + 1
 
 
-# GUI
-# window.wm_attributes('-topmost',1)
-def on_press(key):   # 监听按键
+
+def on_press_to_stop(event=None):
   global flag
-  if key == keyboard.Key.home:
-    flag = True # 改变
-    return False # 返回False，键盘监听结束！
+  flag = True # 改变
 
 if __name__ == '__main__':
   flag = False
-  th = threading.Thread(target=video_record)
-  th.start()
-  with keyboard.Listener(on_press=on_press) as listener:
-    listener.join()
-  time.sleep(1)
+  energyBar = EnergyBar()
+  t = threading.Thread(target=video_record, args=(energyBar,))
+  t.setDaemon(True)
+  t.start()
+
+  energyBar.start(on_press_to_stop)
+
+  # with keyboard.Listener(on_press=on_press) as listener:
+  #   listener.join()
+
 
 
