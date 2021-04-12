@@ -48,4 +48,9 @@ works to be done:
 ### 2021/4/11
 The layout is far from good, need to change the place of the window  
 need to at least change the color  
-or the position
+or the position  
+
+### 2021/4/12
+User study  
+Things to prepare: A topic, environment set up, light, camera, questionnaire  
+will do some experiment today, successful or not, will introduce to others and collect some data.
