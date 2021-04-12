@@ -119,8 +119,8 @@ def video_record(energyBar:EnergyBar):   # 录入视频
 
     face0=face0+(sync_res0,)
     face1=face1+(sync_res1,)
-    res0=np.sqrt(sync_res0) * 4
-    res1=np.sqrt(sync_res1) * 4
+    res0=np.sqrt(sync_res0) * 2
+    res1=np.sqrt(sync_res1) * 2
     energyBar.changeBar0Progress(res0)
     energyBar.changeBar1Progress(res1)
     # return the sync result to the sum
