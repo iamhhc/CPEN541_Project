@@ -11,17 +11,18 @@ class EnergyBar:
         self.s.theme_use('clam')
         self.s.configure("red.Horizontal.TProgressbar", foreground='red', background='red')
         self.root = tkinter.Tk()
-        self.root.geometry("200x200")
-        self.progressbar0 = ttk.Progressbar(self.root, orient=VERTICAL, length=100, mode='determinate')
-        self.progressbar0.pack(pady=20, padx=5, side=tkinter.LEFT)
-        self.progressbar0["value"] = 0
+        self.root.geometry("200x300")
 
-        self.progressbarSum = ttk.Progressbar(self.root, orient=VERTICAL, length=100, mode='determinate')
-        self.progressbarSum.pack(pady=20, padx=5, side=tkinter.LEFT)
+        self.progressbarSum = ttk.Progressbar(self.root, orient=HORIZONTAL, length=300, mode='determinate')
+        self.progressbarSum.pack(pady=10, padx=5, side=tkinter.BOTTOM)
         self.progressbarSum["value"] = 0
 
-        self.progressbar1 = ttk.Progressbar(self.root, orient=VERTICAL, length=100, mode='determinate')
-        self.progressbar1.pack(pady=20, padx=5, side=tkinter.LEFT)
+        self.progressbar0 = ttk.Progressbar(self.root, orient=VERTICAL, length=200, mode='determinate')
+        self.progressbar0.pack(pady=10, padx=5, side=tkinter.LEFT)
+        self.progressbar0["value"] = 0
+
+        self.progressbar1 = ttk.Progressbar(self.root, orient=VERTICAL, length=200, mode='determinate')
+        self.progressbar1.pack(pady=10, padx=5, side=tkinter.RIGHT)
         self.progressbar1["value"] = 0
 
         # add frame to change color and layout, but can not change the value somehow

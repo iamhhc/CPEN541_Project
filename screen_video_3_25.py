@@ -19,13 +19,12 @@ face_classifier =cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_def
 window = tk.Tk()
 face0Data=[]
 face1Data=[]
-faceData0_5s=[]
-faceData1_5s=[]
-# res = sq_queue.SqQueue(15)
 q_face0 = MyQueue(10)
 q_face1 = MyQueue(10)
 width, height = 1920,1080
+res_sync = 0
 
+# save the result into csv file
 def saveHeadMovementData(face0Data :list, face1Data :list):
 
   timeStamp=int(time.time())
@@ -39,14 +38,9 @@ def saveHeadMovementData(face0Data :list, face1Data :list):
   face1DataWriter.writerow(fileHeader)
   face1DataWriter.writerows(face1Data)
 
-
+# return var of queue input
 def test_sync(inputqueue:MyQueue):
-  # for i in range(15):
-  #   faceData0_5s[i] = inputqueue[i]
-  # avg = np.mean(inputqueue)
-
   return np.var(inputqueue.getQueue())
-
 
 def video_record(energyBar:EnergyBar):   # 录入视频
 
@@ -90,7 +84,6 @@ def video_record(energyBar:EnergyBar):   # 录入视频
     if len(faces)==0:
         print('No faces detected!')
 
-
     elif len(faces)==1:
       print('1 face detected!')
 
@@ -130,7 +123,14 @@ def video_record(energyBar:EnergyBar):   # 录入视频
     res1=np.sqrt(sync_res1) * 4
     energyBar.changeBar0Progress(res0)
     energyBar.changeBar1Progress(res1)
-    energyBar.changeBarSumProgress((res0+res1)/2)
+    # return the sync result to the sum
+    if (res0>20.0 and res1>20.0):
+      res_sync = 100
+    elif res0>20.0 or res1>20.0 :
+      res_sync = 50
+    else:
+      res_sync = 0
+    energyBar.changeBarSumProgress(res_sync)
 
     face0Data.append(face0)
     face1Data.append(face1)
@@ -145,7 +145,6 @@ def video_record(energyBar:EnergyBar):   # 录入视频
     lastFace1=face1
 
     i = i + 1
-
 
 
 def on_press_to_stop(event=None):

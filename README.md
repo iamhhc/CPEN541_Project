@@ -44,3 +44,8 @@ works to be done:
 4. *find out other ways to visualize the output (optional)*  
 5. find volunteers?  
 6. start the report  
+
+### 2021/4/11
+The layout is far from good, need to change the place of the window  
+need to at least change the color  
+or the position
