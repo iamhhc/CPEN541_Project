@@ -7,6 +7,9 @@ from tkinter import ttk
 
 class EnergyBar:
     def __init__(self):
+        self.s = ttk.Style()
+        self.s.theme_use('clam')
+        self.s.configure("red.Horizontal.TProgressbar", foreground='red', background='red')
         self.root = tkinter.Tk()
         self.root.geometry("200x200")
         self.progressbar0 = ttk.Progressbar(self.root, orient=VERTICAL, length=100, mode='determinate')
@@ -14,14 +17,24 @@ class EnergyBar:
         self.progressbar0["value"] = 0
 
         self.progressbarSum = ttk.Progressbar(self.root, orient=VERTICAL, length=100, mode='determinate')
-        self.progressbarSum.pack(pady=20, padx=5,side=tkinter.LEFT)
+        self.progressbarSum.pack(pady=20, padx=5, side=tkinter.LEFT)
         self.progressbarSum["value"] = 0
 
         self.progressbar1 = ttk.Progressbar(self.root, orient=VERTICAL, length=100, mode='determinate')
         self.progressbar1.pack(pady=20, padx=5, side=tkinter.LEFT)
         self.progressbar1["value"] = 0
 
-    def changeBar0Progress(self,value):
+        # add frame to change color and layout, but can not change the value somehow
+        # frame = tkinter.Frame(self.root)
+        # #frame.grid()
+        # s = ttk.Style()
+        # s.theme_use('clam')
+        # s.configure("red.Horizontal.TProgressbar", foreground='red', background='red')
+        # ttk.Progressbar(frame, style="red.Horizontal.TProgressbar", orient="horizontal", length=600, mode="determinate",
+        #                 maximum=4, value=1).grid(row=2, column=1)
+        # frame.pack()
+
+    def changeBar0Progress(self, value):
 
         self.progressbar0["value"] = value
 

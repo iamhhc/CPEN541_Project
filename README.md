@@ -31,3 +31,16 @@ second energy bar:  x:1700  y:660  w:66  h:200
 
 优化输出数据，如果没检测到和上一帧保持一样
 判断相关性
+
+### 2021/4/8
+use a queue to save 15 frames  
+calculate the standard deviation of the 15 number  
+use the result as an indication whether the user has nodded
+
+works to be done:
+1. split the window (*now we have two bars in the same window*)  
+2. move the window to the right place (*the information of the position is listed above*)  
+3. make sure the windows are always on top  
+4. *find out other ways to visualize the output (optional)*  
+5. find volunteers?  
+6. start the report  
