@@ -21,15 +21,12 @@ face0Data=[]
 face1Data=[]
 faceData0_5s=[]
 faceData1_5s=[]
-res = sq_queue.SqQueue(15)
-q_face0 = MyQueue(15)
-q_face1 = MyQueue(15)
+# res = sq_queue.SqQueue(15)
+q_face0 = MyQueue(10)
+q_face1 = MyQueue(10)
 width, height = 1920,1080
 
 def saveHeadMovementData(face0Data :list, face1Data :list):
-  print("in saveHeadMovementData")
-  print("len(face0Data):",len(face0Data))
-  print("len(face1Data):",len(face1Data))
 
   timeStamp=int(time.time())
   fileHeader = ["timestamp","X", "Y","W","H","var"]
@@ -59,7 +56,6 @@ def video_record(energyBar:EnergyBar):   # 录入视频
   width, high = screen.size # 获取当前屏幕的大小
   #fourcc = VideoWriter_fourcc('X', 'V', 'I', 'D') # MPEG-4编码,文件后缀可为.avi .asf .mov等
   #video = VideoWriter('%s.avi' % name, fourcc, 15, (width, high)) # （文件名，编码器，帧率，视频宽高）
-  #print('3秒后开始录制----')  # 可选
   #time.sleep(3)
   print('开始录制!')
   global start_time
@@ -130,10 +126,11 @@ def video_record(energyBar:EnergyBar):   # 录入视频
 
     face0=face0+(sync_res0,)
     face1=face1+(sync_res1,)
-    print(" np.sqrt(sync_res0) ", np.sqrt(sync_res0))
-
-    energyBar.changeBar0Progress(np.sqrt(sync_res0)/2)
-    energyBar.changeBar1Progress(np.sqrt(sync_res1)/2)
+    res0=np.sqrt(sync_res0) * 4
+    res1=np.sqrt(sync_res1) * 4
+    energyBar.changeBar0Progress(res0)
+    energyBar.changeBar1Progress(res1)
+    energyBar.changeBarSumProgress((res0+res1)/2)
 
     face0Data.append(face0)
     face1Data.append(face1)

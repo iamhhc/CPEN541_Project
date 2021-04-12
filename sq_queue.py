@@ -40,7 +40,7 @@ class SqQueue(object):
     def ShowQueue(self):
         for i in range(self.maxsize):
             print(self.queue[i],end=',')
-        print(' ')
+
 # 测试程序
 if __name__ == "__main__":
     # 建立大小为15的循环队列
