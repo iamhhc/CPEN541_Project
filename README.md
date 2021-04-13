@@ -53,4 +53,9 @@ or the position
 ### 2021/4/12
 User study  
 Things to prepare: A topic, environment set up, light, camera, questionnaire  
-will do some experiment today, successful or not, will introduce to others and collect some data.
+will do some experiment today, successful or not, will introduce to others and collect some data.  
+
+### 2021/4/13
+1. make a online survey, which is easier to gather the results.
+2. try to compile the python code into a package so people can download the package and use the design without downloading the python libs.
+3. already start to write the paper and the report.
