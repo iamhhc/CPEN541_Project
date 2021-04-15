@@ -1,15 +1,11 @@
-from copy import deepcopy
-import sq_queue
 import time,threading
-from datetime import datetime
+import numpy as np
 from PIL import ImageGrab
 from cv2 import *
 import cv2
 import tkinter as tk
 import csv
-import numpy as np
-from pynput import keyboard
-from numpy import *
+
 
 from MyQueue import MyQueue
 from energy_bar import EnergyBar
@@ -23,7 +19,7 @@ q_face0 = MyQueue(10)
 q_face1 = MyQueue(10)
 width, height = 1920,1080
 res_sync = 0
-
+stop=False
 # save the result into csv file
 def saveHeadMovementData(face0Data :list, face1Data :list):
 
@@ -44,24 +40,21 @@ def test_sync(inputqueue:MyQueue):
 
 def video_record(energyBar:EnergyBar):   # 录入视频
 
-  global name
-  name = datetime.now().strftime('%Y-%m-%d %H-%M-%S') # 当前的时间（当文件名）
+  global stop
   screen = ImageGrab.grab() # 获取当前屏幕
   width, high = screen.size # 获取当前屏幕的大小
-  #fourcc = VideoWriter_fourcc('X', 'V', 'I', 'D') # MPEG-4编码,文件后缀可为.avi .asf .mov等
-  #video = VideoWriter('%s.avi' % name, fourcc, 15, (width, high)) # （文件名，编码器，帧率，视频宽高）
-  #time.sleep(3)
-  print('开始录制!')
-  global start_time
-  start_time = time.time()
+
+
+  print('start')
   i = 0
   lastFace0=(-1,0,0,0,0)
   lastFace1=(-1,0,0,0,0)
 
   while True:
-    if flag:
+    if stop:
       print("录制结束！")
       saveHeadMovementData(face0Data,face1Data)
+      energyBar.root.destroy()
       global final_time
       final_time = time.time()
       #video.release() #释放
@@ -148,12 +141,11 @@ def video_record(energyBar:EnergyBar):   # 录入视频
 
 
 def on_press_to_stop(event=None):
-  global flag
-  print("event-----",event.char)
-  flag = True # 改变
+  global stop
+  # print("event-----",event.char)
+  stop = True
 
 if __name__ == '__main__':
-  flag = False
   energyBar = EnergyBar()
   t = threading.Thread(target=video_record, args=(energyBar,))
   t.setDaemon(True)
